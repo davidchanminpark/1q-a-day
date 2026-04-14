@@ -60,27 +60,10 @@ struct JournalView: View {
     }
 
     private var dateNavigation: some View {
-        HStack {
-            Button(action: { viewModel.goToPreviousDay() }) {
-                Image(systemName: "chevron.left")
-                    .font(.title2)
-                    .foregroundStyle(.primary)
-            }
-
-            Spacer()
-
-            Text(viewModel.formattedDate)
-                .font(.headline)
-
-            Spacer()
-
-            Button(action: { viewModel.goToNextDay() }) {
-                Image(systemName: "chevron.right")
-                    .font(.title2)
-                    .foregroundStyle(.primary)
-            }
-        }
-        .padding(.horizontal)
+        Text(viewModel.formattedDate)
+            .font(.headline)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal)
     }
 }
 

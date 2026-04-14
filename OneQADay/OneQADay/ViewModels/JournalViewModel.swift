@@ -35,16 +35,6 @@ class JournalViewModel: ObservableObject {
         previousEntries = dataService.getPreviousYearEntries(for: currentDate)
     }
 
-    func goToPreviousDay() {
-        currentDate = currentDate.adding(days: -1)
-        loadCurrentDay()
-    }
-
-    func goToNextDay() {
-        currentDate = currentDate.adding(days: 1)
-        loadCurrentDay()
-    }
-
     func goToDate(_ date: Date) {
         currentDate = date
         loadCurrentDay()
