@@ -14,24 +14,53 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                aboutSection
+            ZStack {
+                Theme.Palette.background.ignoresSafeArea()
 
-                #if DEBUG
-                developerSection
-                #endif
+                ScrollView {
+                    VStack(spacing: Theme.Spacing.xl) {
+                        header
+
+                        aboutSection
+
+                        #if DEBUG
+                        developerSection
+                        #endif
+                    }
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.vertical, Theme.Spacing.md)
+                }
             }
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
-    // MARK: - Sections
+    private var header: some View {
+        VStack(spacing: Theme.Spacing.xs) {
+            Text("Settings")
+                .font(Theme.Fonts.cursive(38))
+                .foregroundStyle(Theme.Palette.accent)
+
+            Text("Preferences & tools")
+                .font(Theme.Fonts.serif(12))
+                .italic()
+                .tracking(2)
+                .textCase(.uppercase)
+                .foregroundStyle(Theme.Palette.muted)
+        }
+        .padding(.top, Theme.Spacing.sm)
+    }
+
+    // MARK: - About
 
     private var aboutSection: some View {
-        Section("About") {
-            LabeledContent("Version", value: "\(appVersion) (\(buildNumber))")
+        section(title: "About") {
+            row(label: "Version", value: "\(appVersion) (\(buildNumber))")
         }
     }
+
+    // MARK: - Developer (DEBUG)
 
     #if DEBUG
     @State private var isLoadingSampleData = false
@@ -40,19 +69,28 @@ struct SettingsView: View {
     @State private var alertMessage: String?
 
     private var developerSection: some View {
-        Section {
-            Button {
-                showLoadConfirmation = true
-            } label: {
-                HStack {
-                    Label("Load 3 Years of Sample Data", systemImage: "square.and.arrow.down")
-                    Spacer()
-                    if isLoadingSampleData {
-                        ProgressView()
-                    }
+        section(title: "Developer") {
+            VStack(spacing: 0) {
+                actionRow(
+                    title: "Load 3 Years of Sample Data",
+                    systemImage: "square.and.arrow.down",
+                    isLoading: isLoadingSampleData
+                ) {
+                    showLoadConfirmation = true
+                }
+                .disabled(isLoadingSampleData)
+
+                divider
+
+                actionRow(
+                    title: "Clear All Journal Entries",
+                    systemImage: "trash",
+                    tint: .red
+                ) {
+                    showClearConfirmation = true
                 }
             }
-            .disabled(isLoadingSampleData)
+            .padding(.vertical, Theme.Spacing.sm)
             .confirmationDialog(
                 "Load Sample Data",
                 isPresented: $showLoadConfirmation,
@@ -63,12 +101,6 @@ struct SettingsView: View {
             } message: {
                 Text("This will add journal entries for the past 3 years. Existing entries won't be overwritten.")
             }
-
-            Button(role: .destructive) {
-                showClearConfirmation = true
-            } label: {
-                Label("Clear All Journal Entries", systemImage: "trash")
-            }
             .confirmationDialog(
                 "Clear All Entries",
                 isPresented: $showClearConfirmation,
@@ -77,20 +109,23 @@ struct SettingsView: View {
                 Button("Clear All Entries", role: .destructive) { clearAllEntries() }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This will permanently delete all journal entries. This cannot be undone.")
+                Text("This will permanently delete all journal entries.")
             }
-        } header: {
-            Label("Developer", systemImage: "hammer")
-        } footer: {
+            .alert("Done", isPresented: .init(
+                get: { alertMessage != nil },
+                set: { if !$0 { alertMessage = nil } }
+            )) {
+                Button("OK") { alertMessage = nil }
+            } message: {
+                Text(alertMessage ?? "")
+            }
+
             Text("Debug build only — not visible in release.")
-        }
-        .alert("Done", isPresented: .init(
-            get: { alertMessage != nil },
-            set: { if !$0 { alertMessage = nil } }
-        )) {
-            Button("OK") { alertMessage = nil }
-        } message: {
-            Text(alertMessage ?? "")
+                .font(Theme.Fonts.serif(11))
+                .italic()
+                .foregroundStyle(Theme.Palette.muted)
+                .padding(.top, Theme.Spacing.xs)
+                .padding(.horizontal, Theme.Spacing.md)
         }
     }
 
@@ -110,6 +145,82 @@ struct SettingsView: View {
         alertMessage = "All journal entries cleared."
     }
     #endif
+
+    // MARK: - Building blocks
+
+    @ViewBuilder
+    private func section<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text(title)
+                .font(Theme.Fonts.serif(12))
+                .italic()
+                .tracking(2)
+                .textCase(.uppercase)
+                .foregroundStyle(Theme.Palette.muted)
+                .padding(.horizontal, Theme.Spacing.md)
+
+            VStack(spacing: 0) {
+                content()
+            }
+            .background(Theme.Palette.surface)
+            .overlay(
+                Rectangle()
+                    .stroke(Theme.Palette.muted.opacity(0.15), lineWidth: 0.5)
+            )
+        }
+    }
+
+    private func row(label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(Theme.Fonts.serif(15))
+                .foregroundStyle(Theme.Palette.ink)
+            Spacer()
+            Text(value)
+                .font(Theme.Fonts.typewriter(13))
+                .foregroundStyle(Theme.Palette.muted)
+        }
+        .padding(.horizontal, Theme.Spacing.md)
+        .padding(.vertical, Theme.Spacing.md)
+    }
+
+    private func actionRow(
+        title: String,
+        systemImage: String,
+        tint: Color? = nil,
+        isLoading: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: Theme.Spacing.md) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 14))
+                    .foregroundStyle(tint ?? Theme.Palette.accent)
+                    .frame(width: 20)
+
+                Text(title)
+                    .font(Theme.Fonts.serif(15))
+                    .foregroundStyle(tint ?? Theme.Palette.ink)
+
+                Spacer()
+
+                if isLoading {
+                    ProgressView()
+                        .tint(Theme.Palette.accent)
+                }
+            }
+            .padding(.horizontal, Theme.Spacing.md)
+            .padding(.vertical, Theme.Spacing.md)
+            .contentShape(Rectangle())
+        }
+    }
+
+    private var divider: some View {
+        Rectangle()
+            .fill(Theme.Palette.muted.opacity(0.15))
+            .frame(height: 0.5)
+            .padding(.horizontal, Theme.Spacing.md)
+    }
 }
 
 #Preview {

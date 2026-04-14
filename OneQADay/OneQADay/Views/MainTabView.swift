@@ -10,13 +10,13 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             JournalView(navigateToDate: $navigateToDate)
                 .tabItem {
-                    Label("Journal", systemImage: "book.fill")
+                    Label("Today", systemImage: "book.closed")
                 }
                 .tag(0)
 
             CalendarView(navigateToDate: $navigateToDate, selectedTab: $selectedTab)
                 .tabItem {
-                    Label("Calendar", systemImage: "calendar")
+                    Label("Reflections", systemImage: "calendar")
                 }
                 .tag(1)
 
@@ -26,6 +26,7 @@ struct MainTabView: View {
                 }
                 .tag(2)
         }
+        .tint(Theme.Palette.ink)
         .onChange(of: navigateToDate) { _, newDate in
             if newDate != nil {
                 selectedTab = 0

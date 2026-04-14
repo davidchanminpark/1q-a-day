@@ -8,20 +8,19 @@ struct CalendarDay: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 2) {
+            VStack(spacing: 3) {
                 Text("\(day)")
-                    .font(.body)
-                    .fontWeight(isToday ? .bold : .regular)
-                    .foregroundStyle(isToday ? .white : .primary)
+                    .font(Theme.Fonts.serif(16, weight: isToday ? .semibold : .regular))
+                    .foregroundStyle(isToday ? Theme.Palette.background : Theme.Palette.ink)
 
                 Circle()
-                    .fill(hasEntry ? (isToday ? .white : Color.green) : Color.clear)
-                    .frame(width: 5, height: 5)
+                    .fill(hasEntry ? (isToday ? Theme.Palette.background : Theme.Palette.accent) : Color.clear)
+                    .frame(width: 4, height: 4)
             }
-            .frame(width: 44, height: 44)
+            .frame(width: 40, height: 40)
             .background(
                 Circle()
-                    .fill(isToday ? Color.blue : Color.clear)
+                    .fill(isToday ? Theme.Palette.accent : Color.clear)
             )
         }
         .buttonStyle(.plain)
@@ -36,4 +35,5 @@ struct CalendarDay: View {
         CalendarDay(day: 18, isToday: true, hasEntry: true, onTap: {})
     }
     .padding()
+    .background(Theme.Palette.background)
 }

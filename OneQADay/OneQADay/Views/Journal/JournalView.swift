@@ -9,33 +9,38 @@ struct JournalView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    dateNavigation
+            ZStack {
+                Theme.Palette.background.ignoresSafeArea()
 
-                    if let question = viewModel.currentQuestion {
-                        QuestionCard(
-                            question: question,
-                            isEditing: viewModel.isEditingQuestion,
-                            editedText: $viewModel.editedQuestionText,
-                            onRefresh: { viewModel.refreshQuestion() },
-                            onEdit: { viewModel.startEditingQuestion() },
-                            onSaveEdit: { viewModel.saveEditedQuestion() },
-                            onCancelEdit: { viewModel.cancelEditingQuestion() }
+                ScrollView {
+                    VStack(spacing: Theme.Spacing.xl) {
+                        header
+
+                        if let question = viewModel.currentQuestion {
+                            QuestionCard(
+                                question: question,
+                                isEditing: viewModel.isEditingQuestion,
+                                editedText: $viewModel.editedQuestionText,
+                                onRefresh: { viewModel.refreshQuestion() },
+                                onEdit: { viewModel.startEditingQuestion() },
+                                onSaveEdit: { viewModel.saveEditedQuestion() },
+                                onCancelEdit: { viewModel.cancelEditingQuestion() }
+                            )
+                        }
+
+                        AnswerEditor(
+                            text: $viewModel.answerText,
+                            isFocused: $isAnswerFocused,
+                            onTextChange: { viewModel.saveAnswer() }
                         )
-                    }
 
-                    AnswerEditor(
-                        text: $viewModel.answerText,
-                        isFocused: $isAnswerFocused,
-                        onTextChange: { viewModel.saveAnswer() }
-                    )
-
-                    if !viewModel.previousEntries.isEmpty {
-                        PreviousAnswers(entries: viewModel.previousEntries)
+                        if !viewModel.previousEntries.isEmpty {
+                            PreviousAnswers(entries: viewModel.previousEntries)
+                        }
                     }
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.vertical, Theme.Spacing.md)
                 }
-                .padding()
             }
             .navigationTitle("Journal")
             .navigationBarTitleDisplayMode(.inline)
@@ -54,16 +59,27 @@ struct JournalView: View {
                     Button("Done") {
                         isAnswerFocused = false
                     }
+                    .foregroundStyle(Theme.Palette.ink)
                 }
             }
         }
     }
 
-    private var dateNavigation: some View {
-        Text(viewModel.formattedDate)
-            .font(.headline)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal)
+    private var header: some View {
+        VStack(spacing: Theme.Spacing.xs) {
+            Text("One Question")
+                .font(Theme.Fonts.cursive(42))
+                .foregroundStyle(Theme.Palette.accent)
+
+            Text(viewModel.formattedDate)
+                .font(Theme.Fonts.serif(14))
+                .italic()
+                .foregroundStyle(Theme.Palette.muted)
+                .tracking(1.5)
+                .textCase(.uppercase)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, Theme.Spacing.sm)
     }
 }
 

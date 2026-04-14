@@ -5,29 +5,53 @@ struct PreviousAnswers: View {
     @State private var isExpanded = true
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
             Button(action: { withAnimation { isExpanded.toggle() } }) {
                 HStack {
-                    Text("Previous Years")
-                        .font(.headline)
-                        .foregroundStyle(.primary)
+                    Text("From Years Past")
+                        .font(Theme.Fonts.serif(16))
+                        .italic()
+                        .tracking(1.5)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Theme.Palette.muted)
 
                     Spacer()
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 11))
+                        .foregroundStyle(Theme.Palette.muted)
                 }
             }
 
             if isExpanded {
-                ForEach(entries) { entry in
-                    PreviousAnswerRow(entry: entry)
+                VStack(spacing: Theme.Spacing.lg) {
+                    ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                        PreviousAnswerRow(entry: entry)
+                        if index < entries.count - 1 {
+                            divider
+                        }
+                    }
                 }
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.vertical, Theme.Spacing.lg)
+        .padding(.top, Theme.Spacing.lg)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(Theme.Palette.muted.opacity(0.25))
+                .frame(height: 0.5)
+        }
+    }
+
+    private var divider: some View {
+        HStack(spacing: Theme.Spacing.sm) {
+            Rectangle().fill(Theme.Palette.muted.opacity(0.2)).frame(height: 0.5).frame(maxWidth: 40)
+            Image(systemName: "circle.fill")
+                .font(.system(size: 3))
+                .foregroundStyle(Theme.Palette.muted.opacity(0.4))
+            Rectangle().fill(Theme.Palette.muted.opacity(0.2)).frame(height: 0.5).frame(maxWidth: 40)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -35,33 +59,30 @@ struct PreviousAnswerRow: View {
     let entry: JournalEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(String(entry.year))
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text(String(entry.year))
+                .font(Theme.Fonts.cursive(28))
+                .foregroundStyle(Theme.Palette.accent)
 
-                Spacer()
-
-                Text(entry.questionText)
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            }
+            Text(entry.questionText)
+                .font(Theme.Fonts.serif(13))
+                .italic()
+                .foregroundStyle(Theme.Palette.muted)
+                .lineLimit(2)
 
             Text(entry.answer)
-                .font(.body)
-                .foregroundStyle(.primary)
-                .lineLimit(3)
+                .font(Theme.Fonts.typewriter(14))
+                .foregroundStyle(Theme.Palette.ink)
+                .lineSpacing(4)
+                .lineLimit(4)
+                .padding(.top, Theme.Spacing.xs)
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 #Preview {
     PreviousAnswers(entries: [])
         .padding()
+        .background(Theme.Palette.background)
 }
