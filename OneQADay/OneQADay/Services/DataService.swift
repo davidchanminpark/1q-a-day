@@ -139,7 +139,7 @@ class DataService {
 
     func getCurrentStreak() -> Int {
         var streak = 0
-        var checkDate = Date()
+        var checkDate = Date().adding(days: -1)
         while getEntry(for: checkDate) != nil {
             streak += 1
             checkDate = checkDate.adding(days: -1)
