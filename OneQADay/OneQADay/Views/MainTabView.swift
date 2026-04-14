@@ -26,7 +26,7 @@ struct MainTabView: View {
                 }
                 .tag(2)
         }
-        .tint(Theme.Palette.ink)
+        .tint(Theme.Palette.background)
         .onChange(of: navigateToDate) { _, newDate in
             if newDate != nil {
                 selectedTab = 0

@@ -58,18 +58,22 @@ struct OneQADayApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
         UINavigationBar.appearance().compactAppearance = navAppearance
 
-        // Tab bar
+        // Tab bar — dark brown with cream accents
+        let tabBackground = ink // dark brown background
+        let tabSelected = bg // cream for selected
+        let tabUnselected = UIColor(red: 180/255, green: 160/255, blue: 150/255, alpha: 1) // muted cream
+
         let tabAppearance = UITabBarAppearance()
         tabAppearance.configureWithOpaqueBackground()
-        tabAppearance.backgroundColor = bg
+        tabAppearance.backgroundColor = tabBackground
         tabAppearance.shadowColor = .clear
         [tabAppearance.stackedLayoutAppearance,
          tabAppearance.inlineLayoutAppearance,
          tabAppearance.compactInlineLayoutAppearance].forEach { item in
-            item.normal.iconColor = muted
-            item.normal.titleTextAttributes = [.foregroundColor: muted]
-            item.selected.iconColor = ink
-            item.selected.titleTextAttributes = [.foregroundColor: ink]
+            item.normal.iconColor = tabUnselected
+            item.normal.titleTextAttributes = [.foregroundColor: tabUnselected]
+            item.selected.iconColor = tabSelected
+            item.selected.titleTextAttributes = [.foregroundColor: tabSelected]
         }
         UITabBar.appearance().standardAppearance = tabAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
