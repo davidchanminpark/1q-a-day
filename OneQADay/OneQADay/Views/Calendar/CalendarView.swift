@@ -90,12 +90,6 @@ struct CalendarView: View {
 
     private var streakFooter: some View {
         VStack(spacing: 4) {
-            Text("The Streak")
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundStyle(.secondary)
-                .textCase(.uppercase)
-
             Text(streakMessage)
                 .font(.subheadline)
                 .foregroundStyle(viewModel.currentStreak == 0 ? .secondary : .primary)
