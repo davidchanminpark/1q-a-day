@@ -48,10 +48,12 @@ struct CalendarView: View {
 
             Spacer()
 
-            // Spacer to keep title centered
-            Image(systemName: "chevron.left")
-                .font(.title2)
-                .hidden()
+            Button(action: { viewModel.goToNextMonth() }) {
+                Image(systemName: "chevron.right")
+                    .font(.title2)
+                    .foregroundStyle(viewModel.canGoToNextMonth ? .primary : .tertiary)
+            }
+            .disabled(!viewModel.canGoToNextMonth)
         }
         .padding(.horizontal)
     }

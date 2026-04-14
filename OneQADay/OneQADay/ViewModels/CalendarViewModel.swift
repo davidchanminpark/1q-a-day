@@ -35,6 +35,11 @@ class CalendarViewModel: ObservableObject {
         return !(year == today.year && month == 1)
     }
 
+    var canGoToNextMonth: Bool {
+        let today = Date()
+        return !(year == today.year && month == today.month)
+    }
+
     var currentStreak: Int {
         dataService?.getCurrentStreak() ?? 0
     }
@@ -52,6 +57,12 @@ class CalendarViewModel: ObservableObject {
     func goToPreviousMonth() {
         guard canGoToPreviousMonth else { return }
         currentMonth = currentMonth.adding(months: -1)
+        loadMonthData()
+    }
+
+    func goToNextMonth() {
+        guard canGoToNextMonth else { return }
+        currentMonth = currentMonth.adding(months: 1)
         loadMonthData()
     }
 
