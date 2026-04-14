@@ -52,7 +52,9 @@ class SampleDataService {
 
         var insertedCount = 0
 
-        for yearOffset in 1...3 {
+        let yesterday = today.adding(days: -1)
+
+        for yearOffset in 0...3 {
             let year = currentYear - yearOffset
 
             // Iterate every calendar day in the year
@@ -63,6 +65,9 @@ class SampleDataService {
             guard var cursor = cal.date(from: components) else { continue }
 
             while cal.component(.year, from: cursor) == year {
+                // Don't generate entries beyond yesterday
+                if cursor > yesterday { break }
+
                 let month = cursor.month
                 let day = cursor.day
 
