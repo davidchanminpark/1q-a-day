@@ -136,4 +136,14 @@ class DataService {
         modelContext.delete(entry)
         try? modelContext.save()
     }
+
+    func getCurrentStreak() -> Int {
+        var streak = 0
+        var checkDate = Date()
+        while getEntry(for: checkDate) != nil {
+            streak += 1
+            checkDate = checkDate.adding(days: -1)
+        }
+        return streak
+    }
 }

@@ -8,17 +8,15 @@ struct CalendarDay: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 4) {
+            VStack(spacing: 2) {
                 Text("\(day)")
                     .font(.body)
                     .fontWeight(isToday ? .bold : .regular)
                     .foregroundStyle(isToday ? .white : .primary)
 
-                if hasEntry {
-                    Image(systemName: "checkmark")
-                        .font(.caption2)
-                        .foregroundStyle(isToday ? .white : .green)
-                }
+                Circle()
+                    .fill(hasEntry ? (isToday ? .white : Color.green) : Color.clear)
+                    .frame(width: 5, height: 5)
             }
             .frame(width: 44, height: 44)
             .background(

@@ -20,6 +20,8 @@ struct CalendarView: View {
                 calendarGrid
 
                 Spacer()
+
+                streakFooter
             }
             .padding()
             .navigationTitle("Calendar")
@@ -35,8 +37,9 @@ struct CalendarView: View {
             Button(action: { viewModel.goToPreviousMonth() }) {
                 Image(systemName: "chevron.left")
                     .font(.title2)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(viewModel.canGoToPreviousMonth ? .primary : .tertiary)
             }
+            .disabled(!viewModel.canGoToPreviousMonth)
 
             Spacer()
 
@@ -45,13 +48,38 @@ struct CalendarView: View {
 
             Spacer()
 
-            Button(action: { viewModel.goToNextMonth() }) {
-                Image(systemName: "chevron.right")
+            // Spacer to keep title centered
+            Image(systemName: "chevron.left")
+                .font(.title2)
+                .hidden()
+        }
+        .padding(.horizontal)
+    }
+
+    private var streakFooter: some View {
+        VStack(spacing: 4) {
+            Text("The Streak")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+
+            if viewModel.currentStreak == 0 {
+                Text("I wish you had been writing journal entries")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            } else {
+                Text("\(viewModel.currentStreak) day\(viewModel.currentStreak == 1 ? "" : "s")")
                     .font(.title2)
+                    .fontWeight(.bold)
                     .foregroundStyle(.primary)
             }
         }
-        .padding(.horizontal)
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     private var weekdayHeader: some View {

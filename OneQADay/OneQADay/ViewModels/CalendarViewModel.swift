@@ -30,6 +30,15 @@ class CalendarViewModel: ObservableObject {
         currentMonth.month
     }
 
+    var canGoToPreviousMonth: Bool {
+        let today = Date()
+        return !(year == today.year && month == 1)
+    }
+
+    var currentStreak: Int {
+        dataService?.getCurrentStreak() ?? 0
+    }
+
     func setup(modelContext: ModelContext) {
         self.dataService = DataService(modelContext: modelContext)
         loadMonthData()
@@ -41,12 +50,8 @@ class CalendarViewModel: ObservableObject {
     }
 
     func goToPreviousMonth() {
+        guard canGoToPreviousMonth else { return }
         currentMonth = currentMonth.adding(months: -1)
-        loadMonthData()
-    }
-
-    func goToNextMonth() {
-        currentMonth = currentMonth.adding(months: 1)
         loadMonthData()
     }
 
