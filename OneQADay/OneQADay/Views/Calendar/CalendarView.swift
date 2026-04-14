@@ -58,6 +58,36 @@ struct CalendarView: View {
         .padding(.horizontal)
     }
 
+    private static let streakMessages: [(Int) -> String] = [
+        { n in "You've been writing for \(n) day\(n == 1 ? "" : "s") straight. Good job." },
+        { n in "That's \(n) day\(n == 1 ? "" : "s") in a row. Keep it going." },
+        { n in "\(n) day\(n == 1 ? "" : "s") and counting. You're building something real." },
+        { n in "A \(n)-day streak. Future you will be grateful." },
+        { n in "You've shown up \(n) day\(n == 1 ? "" : "s") in a row. That's not nothing." },
+        { n in "\(n) consecutive day\(n == 1 ? "" : "s") of reflection. Nice work." },
+        { n in "Day \(n) of your streak. Don't break the chain." },
+        { n in "You've written every day for \(n) day\(n == 1 ? "" : "s"). Impressive." },
+    ]
+
+    private static let emptyStreakMessages: [String] = [
+        "I wish you had been writing journal entries.",
+        "No streak yet — today is a good day to start.",
+        "Your streak is waiting to begin.",
+        "Every great streak starts with a single entry.",
+        "No days in a row yet. Write something today.",
+    ]
+
+    private var streakMessage: String {
+        let streak = viewModel.currentStreak
+        // Use today's day-of-year to pick a message so it's stable within a day
+        let index = Date().dayOfYear
+        if streak == 0 {
+            return Self.emptyStreakMessages[index % Self.emptyStreakMessages.count]
+        } else {
+            return Self.streakMessages[index % Self.streakMessages.count](streak)
+        }
+    }
+
     private var streakFooter: some View {
         VStack(spacing: 4) {
             Text("The Streak")
@@ -66,17 +96,10 @@ struct CalendarView: View {
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
 
-            if viewModel.currentStreak == 0 {
-                Text("I wish you had been writing journal entries")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            } else {
-                Text("\(viewModel.currentStreak) day\(viewModel.currentStreak == 1 ? "" : "s")")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.primary)
-            }
+            Text(streakMessage)
+                .font(.subheadline)
+                .foregroundStyle(viewModel.currentStreak == 0 ? .secondary : .primary)
+                .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .padding()
