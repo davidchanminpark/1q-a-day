@@ -19,6 +19,12 @@ struct MainTabView: View {
                     Label("Calendar", systemImage: "calendar")
                 }
                 .tag(1)
+
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape")
+                }
+                .tag(2)
         }
         .onChange(of: navigateToDate) { _, newDate in
             if newDate != nil {

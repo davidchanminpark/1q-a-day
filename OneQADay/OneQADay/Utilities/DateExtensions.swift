@@ -5,6 +5,22 @@ extension Date {
         Calendar.current.ordinality(of: .day, in: .year, for: self) ?? 1
     }
 
+    /// Stable 1-365 index using a non-leap reference year so the same month/day
+    /// always maps to the same question, regardless of whether the current year
+    /// is a leap year. Feb 29 maps to Feb 28 (index 59).
+    var stableDayOfYear: Int {
+        let cal = Calendar.current
+        var components = DateComponents()
+        components.year = 2025 // non-leap reference
+        components.month = cal.component(.month, from: self)
+        components.day = cal.component(.day, from: self)
+        if components.month == 2 && components.day == 29 {
+            components.day = 28
+        }
+        guard let refDate = cal.date(from: components) else { return 1 }
+        return cal.ordinality(of: .day, in: .year, for: refDate) ?? 1
+    }
+
     var year: Int {
         Calendar.current.component(.year, from: self)
     }

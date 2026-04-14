@@ -28,14 +28,11 @@ class JournalViewModel: ObservableObject {
     func loadCurrentDay() {
         guard let dataService = dataService else { return }
 
-        let dayOfYear = currentDate.dayOfYear
+        let dayOfYear = currentDate.stableDayOfYear
         currentQuestion = dataService.getQuestion(for: dayOfYear)
         currentEntry = dataService.getEntry(for: currentDate)
         answerText = currentEntry?.answer ?? ""
-        previousEntries = dataService.getPreviousYearEntries(
-            for: dayOfYear,
-            excludingYear: currentDate.year
-        )
+        previousEntries = dataService.getPreviousYearEntries(for: currentDate)
     }
 
     func goToPreviousDay() {
@@ -75,7 +72,7 @@ class JournalViewModel: ObservableObject {
     func refreshQuestion() {
         guard let dataService = dataService else { return }
 
-        let dayOfYear = currentDate.dayOfYear
+        let dayOfYear = currentDate.stableDayOfYear
         currentQuestion = dataService.assignRandomQuestion(for: dayOfYear)
     }
 

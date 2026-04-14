@@ -53,11 +53,12 @@ class DataService {
     // MARK: - Journal Entries
 
     func getEntry(for date: Date) -> JournalEntry? {
-        let dayOfYear = date.dayOfYear
+        let month = date.month
+        let day = date.day
         let year = date.year
 
         var descriptor = FetchDescriptor<JournalEntry>(
-            predicate: #Predicate { $0.dayOfYear == dayOfYear && $0.year == year }
+            predicate: #Predicate { $0.month == month && $0.day == day && $0.year == year }
         )
         descriptor.fetchLimit = 1
         return try? modelContext.fetch(descriptor).first
@@ -82,9 +83,13 @@ class DataService {
         }
     }
 
-    func getPreviousYearEntries(for dayOfYear: Int, excludingYear: Int) -> [JournalEntry] {
+    func getPreviousYearEntries(for date: Date) -> [JournalEntry] {
+        let month = date.month
+        let day = date.day
+        let currentYear = date.year
+
         var descriptor = FetchDescriptor<JournalEntry>(
-            predicate: #Predicate { $0.dayOfYear == dayOfYear && $0.year != excludingYear },
+            predicate: #Predicate { $0.month == month && $0.day == day && $0.year != currentYear },
             sortBy: [SortDescriptor(\.year, order: .reverse)]
         )
         return (try? modelContext.fetch(descriptor)) ?? []
