@@ -64,17 +64,11 @@ struct PreviousAnswerRow: View {
                 .font(Theme.Fonts.cursive(28))
                 .foregroundStyle(Theme.Palette.accent)
 
-            Text(entry.questionText)
-                .font(Theme.Fonts.serif(13))
-                .italic()
-                .foregroundStyle(Theme.Palette.muted)
-                .lineLimit(2)
-
             Text(entry.answer)
                 .font(Theme.Fonts.typewriter(14))
                 .foregroundStyle(Theme.Palette.ink)
                 .lineSpacing(4)
-                .lineLimit(4)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, Theme.Spacing.xs)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

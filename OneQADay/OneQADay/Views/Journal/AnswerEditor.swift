@@ -8,8 +8,18 @@ struct AnswerEditor: View {
     var wordLimit: Int = 200
     var characterLimit: Int = 1500
 
-    private let lineHeight: CGFloat = 28
     private let minLines: Int = 6
+    private let fontSize: CGFloat = 15
+
+    // AmericanTypewriter at 15pt has a natural line height of ~20pt.
+    // extraSpacing is added via .lineSpacing(), giving a total slot of 32pt.
+    private let fontLineHeight: CGFloat = 20
+    private let extraSpacing: CGFloat = 12
+    private var lineHeight: CGFloat { fontLineHeight + extraSpacing }
+
+    // Distance from ZStack top to where the first text row begins
+    // (SwiftUI .padding(.top, 2) + UITextView default inset ~8pt).
+    private let textTopInset: CGFloat = 10
 
     private var wordCount: Int {
         text.split(whereSeparator: \.isWhitespace).count
@@ -20,14 +30,13 @@ struct AnswerEditor: View {
     var body: some View {
         VStack(alignment: .trailing, spacing: Theme.Spacing.xs) {
             ZStack(alignment: .topLeading) {
-                // Ruled paper background
                 ruledPaper
 
                 TextEditor(text: $text)
                     .focused(isFocused)
-                    .font(Theme.Fonts.typewriter(15))
+                    .font(Theme.Fonts.typewriter(fontSize))
                     .foregroundStyle(Theme.Palette.ink)
-                    .lineSpacing(lineHeight - 18)
+                    .lineSpacing(extraSpacing)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                     .padding(.horizontal, Theme.Spacing.xs)
@@ -44,7 +53,7 @@ struct AnswerEditor: View {
 
                 if text.isEmpty {
                     Text("tap to begin your entry…")
-                        .font(Theme.Fonts.typewriter(15))
+                        .font(Theme.Fonts.typewriter(fontSize))
                         .italic()
                         .foregroundStyle(Theme.Palette.muted.opacity(0.5))
                         .padding(.horizontal, Theme.Spacing.sm + 4)
@@ -64,8 +73,11 @@ struct AnswerEditor: View {
         Canvas { context, size in
             let lineCount = Int(size.height / lineHeight) + 1
             let ruleColor = Theme.Palette.rule
+            // First line sits at the bottom of the first text row:
+            // textTopInset (UIKit inset) + fontLineHeight (content height of row 0)
+            let firstLineY = textTopInset + fontLineHeight
             for i in 0..<max(lineCount, minLines) {
-                let y = CGFloat(i + 1) * lineHeight - 0.25
+                let y = firstLineY + CGFloat(i) * lineHeight
                 let path = Path { p in
                     p.move(to: CGPoint(x: 0, y: y))
                     p.addLine(to: CGPoint(x: size.width, y: y))

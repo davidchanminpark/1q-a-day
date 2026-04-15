@@ -7,6 +7,19 @@ class SampleDataService {
     private let modelContext: ModelContext
     private let dataService: DataService
 
+    // Curated entries for specific dates — used for screenshots / App Store previews.
+    // Key: "month-day", value: (question text, [year: answer])
+    private static let curatedEntries: [String: (question: String, answers: [Int: String])] = [
+        "4-10": (
+            question: "What's something that surprised you recently?",
+            answers: [
+                2025: "How much I enjoyed being alone on a Saturday — genuinely enjoyed it, not just tolerated it. I had nowhere to be and instead of feeling restless I felt this unusual sense of fullness. I read, made a long lunch, went for a walk with no destination. I think I surprised myself by not needing it to be more than it was.",
+                2024: "A stranger held the elevator for me even though I was far away and it clearly cost them two minutes. Such a small thing, but I kept thinking about it. I'd been in a stretch of feeling like the city was indifferent, and that one gesture quietly reset something in me. I was surprised how much weight I'd been carrying about it without realizing.",
+                2023: "My own reaction to some news I'd been dreading. I'd built it up so much in my head that when it finally came, I just felt calm. Not numb — calm. I sat with it for a while trying to figure out if I was in denial, but no, I think I'd already done the hard work before I even knew the outcome. That felt like growth I hadn't noticed happening."
+            ]
+        )
+    ]
+
     private static let sampleAnswers: [String] = [
         "I think about this more than I'd like to admit. Honestly, the answer changes depending on the day, but today I feel pretty clear about it.",
         "This question always takes me back to a specific memory — the summer I was 17, sitting on the back porch, realizing things were about to change forever.",
@@ -80,11 +93,14 @@ class SampleDataService {
                 if existing == 0 {
                     let stableIndex = cursor.stableDayOfYear
                     if let question = dataService.getQuestion(for: stableIndex) {
-                        let answer = Self.sampleAnswers.randomElement() ?? "Sample answer."
+                        let curatedKey = "\(month)-\(day)"
+                        let curatedAnswer = Self.curatedEntries[curatedKey]?.answers[year]
+                        let curatedQuestion = Self.curatedEntries[curatedKey]?.question
+                        let answer = curatedAnswer ?? Self.sampleAnswers.randomElement() ?? "Sample answer."
                         let entry = JournalEntry(
                             date: cursor,
                             answer: answer,
-                            questionText: question.text,
+                            questionText: curatedQuestion ?? question.text,
                             question: question
                         )
                         modelContext.insert(entry)
