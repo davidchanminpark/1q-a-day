@@ -14,8 +14,10 @@ extension Date {
         components.year = 2025 // non-leap reference
         components.month = cal.component(.month, from: self)
         components.day = cal.component(.day, from: self)
+        // Feb 29 gets its own dedicated slot 366 (never collides with any
+        // non-leap day, and keeps March 1 consistently at slot 60).
         if components.month == 2 && components.day == 29 {
-            components.day = 28
+            return 366
         }
         guard let refDate = cal.date(from: components) else { return 1 }
         return cal.ordinality(of: .day, in: .year, for: refDate) ?? 1

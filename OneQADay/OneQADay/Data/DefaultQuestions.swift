@@ -389,7 +389,10 @@ struct DefaultQuestions {
         "What does this time of year mean to you?",
         "What's a wish for the coming year?",
         "How do you say goodbye to this year?",
-        "What word would you choose for next year?"
+        "What word would you choose for next year?",
+
+        // Leap Day — Feb 29 (slot 366, shuffled into Feb bucket)
+        "What would you do with an extra day that comes only once every four years?"
     ]
 
     static func question(for dayOfYear: Int) -> String {

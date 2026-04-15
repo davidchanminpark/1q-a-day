@@ -14,15 +14,43 @@ class DataService {
     func initializeQuestionsIfNeeded() {
         let descriptor = FetchDescriptor<Question>()
         let existingCount = (try? modelContext.fetchCount(descriptor)) ?? 0
+        guard existingCount == 0 else { return }
 
-        if existingCount == 0 {
-            for dayOfYear in 1...365 {
-                let questionText = DefaultQuestions.question(for: dayOfYear)
-                let question = Question(dayOfYear: dayOfYear, text: questionText, isDefault: true)
+        // Shuffle questions within each monthly bucket so each user gets a
+        // unique but permanently fixed ordering.
+        let monthRanges: [ClosedRange<Int>] = [
+            1...31,    // January
+            32...59,   // February (28 days; leap day handled separately below)
+            60...90,   // March
+            91...120,  // April
+            121...151, // May
+            152...181, // June
+            182...212, // July
+            213...243, // August
+            244...273, // September
+            274...304, // October
+            305...334, // November
+            335...365  // December
+        ]
+
+        let allQuestions = DefaultQuestions.questions
+        for range in monthRanges {
+            var bucket = Array(allQuestions[(range.lowerBound - 1)...(range.upperBound - 1)])
+            bucket.shuffle()
+            for (offset, day) in range.enumerated() {
+                let question = Question(dayOfYear: day, text: bucket[offset], isDefault: true)
                 modelContext.insert(question)
             }
-            try? modelContext.save()
         }
+
+        // Feb 29 (slot 366): shuffle it into the February bucket so the leap
+        // day question is drawn from the same pool, just randomly assigned.
+        var febLeapBucket = Array(allQuestions[31...59]) // all 29 Feb questions
+        febLeapBucket.shuffle()
+        let leapDayQuestion = Question(dayOfYear: 366, text: febLeapBucket[0], isDefault: true)
+        modelContext.insert(leapDayQuestion)
+
+        try? modelContext.save()
     }
 
     func getQuestion(for dayOfYear: Int) -> Question? {

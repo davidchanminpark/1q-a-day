@@ -16,15 +16,7 @@ struct JournalView: View {
                         header
 
                         if let question = viewModel.currentQuestion {
-                            QuestionCard(
-                                question: question,
-                                isEditing: viewModel.isEditingQuestion,
-                                editedText: $viewModel.editedQuestionText,
-                                onRefresh: { viewModel.refreshQuestion() },
-                                onEdit: { viewModel.startEditingQuestion() },
-                                onSaveEdit: { viewModel.saveEditedQuestion() },
-                                onCancelEdit: { viewModel.cancelEditingQuestion() }
-                            )
+                            QuestionCard(question: question)
                         }
 
                         AnswerEditor(
@@ -64,7 +56,7 @@ struct JournalView: View {
     private var header: some View {
         VStack(spacing: Theme.Spacing.xs) {
             Text("Today's Question")
-                .font(Theme.Fonts.cursive(42))
+                .font(Theme.Fonts.cursive(40))
                 .foregroundStyle(Theme.Palette.accent)
 
             Text(viewModel.formattedDate)
