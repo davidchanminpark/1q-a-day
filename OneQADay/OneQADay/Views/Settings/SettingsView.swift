@@ -28,11 +28,14 @@ struct SettingsView: View {
                         #endif
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
-                    .padding(.vertical, Theme.Spacing.md)
+                    .padding(.top, Theme.Spacing.md)
+                    .padding(.bottom, 100)
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.Palette.background, for: .navigationBar)
+            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
         }
     }
 

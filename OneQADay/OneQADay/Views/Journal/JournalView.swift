@@ -39,11 +39,14 @@ struct JournalView: View {
                         }
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
-                    .padding(.vertical, Theme.Spacing.md)
+                    .padding(.top, Theme.Spacing.md)
+                    .padding(.bottom, 100)
                 }
             }
-            .navigationTitle("Journal")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.Palette.background, for: .navigationBar)
+            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
             .onAppear {
                 viewModel.setup(modelContext: modelContext)
             }
@@ -67,7 +70,7 @@ struct JournalView: View {
 
     private var header: some View {
         VStack(spacing: Theme.Spacing.xs) {
-            Text("One Question")
+            Text("Today's Question")
                 .font(Theme.Fonts.cursive(42))
                 .foregroundStyle(Theme.Palette.accent)
 

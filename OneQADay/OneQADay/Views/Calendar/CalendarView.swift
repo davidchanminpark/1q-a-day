@@ -29,10 +29,13 @@ struct CalendarView: View {
                     streakFooter
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
-                .padding(.vertical, Theme.Spacing.md)
+                .padding(.top, Theme.Spacing.md)
+                .padding(.bottom, 100)
             }
-            .navigationTitle("Reflections")
+            .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Theme.Palette.background, for: .navigationBar)
+            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
             .onAppear {
                 viewModel.setup(modelContext: modelContext)
             }
@@ -41,7 +44,7 @@ struct CalendarView: View {
 
     private var header: some View {
         VStack(spacing: Theme.Spacing.xs) {
-            Text("Reflections")
+            Text("Calendar")
                 .font(Theme.Fonts.cursive(38))
                 .foregroundStyle(Theme.Palette.accent)
 

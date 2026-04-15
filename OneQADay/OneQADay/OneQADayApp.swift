@@ -58,24 +58,9 @@ struct OneQADayApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
         UINavigationBar.appearance().compactAppearance = navAppearance
 
-        // Tab bar — dark brown with cream accents
-        let tabBackground = ink // dark brown background
-        let tabSelected = bg // cream for selected
-        let tabUnselected = UIColor(red: 180/255, green: 160/255, blue: 150/255, alpha: 1) // muted cream
-
-        let tabAppearance = UITabBarAppearance()
-        tabAppearance.configureWithOpaqueBackground()
-        tabAppearance.backgroundColor = tabBackground
-        tabAppearance.shadowColor = .clear
-        [tabAppearance.stackedLayoutAppearance,
-         tabAppearance.inlineLayoutAppearance,
-         tabAppearance.compactInlineLayoutAppearance].forEach { item in
-            item.normal.iconColor = tabUnselected
-            item.normal.titleTextAttributes = [.foregroundColor: tabUnselected]
-            item.selected.iconColor = tabSelected
-            item.selected.titleTextAttributes = [.foregroundColor: tabSelected]
-        }
-        UITabBar.appearance().standardAppearance = tabAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabAppearance
+        // Tab bar appearance is controlled per-view via SwiftUI's
+        // .toolbarBackground modifiers (see JournalView, CalendarView,
+        // SettingsView). iOS 26's Liquid Glass tab bar ignores most
+        // UITabBarAppearance settings, so we rely on SwiftUI instead.
     }
 }
