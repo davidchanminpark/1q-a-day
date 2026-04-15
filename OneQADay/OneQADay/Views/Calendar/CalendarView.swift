@@ -4,8 +4,7 @@ import SwiftData
 struct CalendarView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = CalendarViewModel()
-    @Binding var navigateToDate: Date?
-    @Binding var selectedTab: Int
+    @State private var selectedDate: Date?
 
     private let columns = Array(repeating: GridItem(.flexible()), count: 7)
     private let weekdays = ["S", "M", "T", "W", "T", "F", "S"]
@@ -39,8 +38,16 @@ struct CalendarView: View {
             .onAppear {
                 viewModel.setup(modelContext: modelContext)
             }
+            .sheet(item: Binding(
+                get: { selectedDate.map { IdentifiableDate(date: $0) } },
+                set: { selectedDate = $0?.date }
+            )) { item in
+                EntryDetailView(date: item.date)
+            }
         }
     }
+
+    // MARK: - Subviews
 
     private var header: some View {
         VStack(spacing: Theme.Spacing.xs) {
@@ -111,15 +118,13 @@ struct CalendarView: View {
                     isToday: viewModel.isToday(day: day),
                     hasEntry: viewModel.hasEntry(day: day)
                 ) {
-                    if let date = viewModel.selectDate(day: day) {
-                        navigateToDate = date
-                    }
+                    selectedDate = viewModel.selectDate(day: day)
                 }
             }
         }
     }
 
-    // MARK: - Streak messages
+    // MARK: - Streak
 
     private static let streakMessages: [(Int) -> String] = [
         { n in "You've been writing for \(n) day\(n == 1 ? "" : "s") straight. Good work." },
@@ -180,7 +185,14 @@ struct CalendarView: View {
     }
 }
 
+// MARK: - Helpers
+
+private struct IdentifiableDate: Identifiable {
+    let id = UUID()
+    let date: Date
+}
+
 #Preview {
-    CalendarView(navigateToDate: .constant(nil), selectedTab: .constant(1))
+    CalendarView()
         .modelContainer(for: [Question.self, JournalEntry.self], inMemory: true)
 }

@@ -4,17 +4,16 @@ import SwiftData
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var selectedTab = 0
-    @State private var navigateToDate: Date?
     @State private var isKeyboardVisible = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                JournalView(navigateToDate: $navigateToDate)
+                JournalView()
                     .tag(0)
                     .toolbar(.hidden, for: .tabBar)
 
-                CalendarView(navigateToDate: $navigateToDate, selectedTab: $selectedTab)
+                CalendarView()
                     .tag(1)
                     .toolbar(.hidden, for: .tabBar)
 
@@ -29,11 +28,6 @@ struct MainTabView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: isKeyboardVisible)
-        .onChange(of: navigateToDate) { _, newDate in
-            if newDate != nil {
-                selectedTab = 0
-            }
-        }
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
             isKeyboardVisible = true
         }
